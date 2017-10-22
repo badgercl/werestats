@@ -1,0 +1,30 @@
+<?php
+class DbConfig{
+        private static $db_name = "";
+        private static $db_user = "";
+        private static $db_pass = "";
+        private static $db_host = "localhost";//Servidor donde esta alojado, puede ser 'localhost' o una IP (externa o interna).
+
+        public static function getConnection(){
+                //Estamos asumiendo el puerto por defecto 8889.
+                $mysqli = new mysqli(self::$db_host, self::$db_user, self::$db_pass, self::$db_name, 8889);
+                $mysqli->set_charset("utf8mb4"); //Importante, para no tener problemas de encoding
+                return $mysqli;
+        }
+	public static function sql($db, $sql){
+          $result = $db->query($sql);
+          if(!$result) die($db->error);
+          $res = array();
+          while ($row = $result->fetch_assoc()) {
+                  $res[] = $row;
+          }
+          return $res;
+        }
+	public static function update($db, $sql){
+          return $db->query($sql);
+        }
+}
+
+$token = "bot";//Complete with your bot token
+$admin_uid = ""; //Admin UID. To receive error reports
+$ga = ""; //Google Analytics ID

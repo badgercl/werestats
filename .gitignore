@@ -1,0 +1,6 @@
+*.pyc
+batch
+config.py
+botconfig.py
+config.php
+bot/
