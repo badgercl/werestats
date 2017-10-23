@@ -13,7 +13,8 @@ You'll need:
 * A Telegram bot
 * MySQL 5.5+
 * PHP 7
-* Python 2.7
+* Python 2.7 (+ Beautiful soup)
+* Nothing else, I'm trying not to use too many dependencies
 
 You need to complete the following config files:
 * config.py: Your DB information here
