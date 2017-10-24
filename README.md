@@ -22,5 +22,5 @@ You need to complete the following config files:
 * web/app/config.php: Your bot and DB information here
 
 # TODO
-* Refactor hardcoded URLs
-* Fix some views showing incorrect stats
+* Improve visualizations
+* Include more commands to the bot: inline queries, re-check the latest stats, etc
