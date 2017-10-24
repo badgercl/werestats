@@ -1,6 +1,6 @@
 <?php
 require_once('app/config.php');
-$sql = 'SELECT players.name AS name, player_stats_delta.uid, played, won, lost, survived, roles.name AS most_common_role, most_killed, most_killed_name, most_killed_by, most_killed_by_name FROM player_stats_delta INNER JOIN ( ( SELECT MAX(id) id, MAX(date) FROM player_stats_delta GROUP BY uid ) b, players, roles ) ON( player_stats_delta.id = b.id AND player_stats_delta.uid = players.uid AND player_stats_delta.most_common_role_id = roles.id ) WHERE players.status>0';
+$sql = 'SELECT players.name AS name, player_stats_delta.uid, played, won, lost, survived, roles.name AS most_common_role, most_killed, most_killed_name, most_killed_by, most_killed_by_name FROM player_stats_delta INNER JOIN ( ( SELECT MAX(id) id, MAX(date) FROM player_stats_delta GROUP BY uid ) b, players, roles ) ON( player_stats_delta.id = b.id AND player_stats_delta.uid = players.uid AND player_stats_delta.most_common_role_id = roles.id ) WHERE players.status>0 ORDER BY won DESC';
 $db = DbConfig::getConnection();
 $result = $db->query($sql);
 $data = array();
