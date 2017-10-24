@@ -12,6 +12,7 @@ sys.setdefaultencoding('utf8')
 
 url = "https://api.telegram.org/bot{}/".format(botconfig.TOKEN) + "{}"
 chat_id = botconfig.GROUP_ID
+base_url = botconfig.BASE_URL
 def send_message(txt, dest):
 	u = url.format("sendMessage")
 	p = {'chat_id':dest,'parse_mode':'html','disable_web_page_preview':True, 'text':txt}
@@ -31,7 +32,7 @@ cursor.close()
 db.close()
 
 i = 1
-text = "Hay nuevas estadísticas de Werewolf Beauchef en <a href='https://badger.cl/werestats?from=bot'>https://badger.cl/werestats</a>.\nLos jugadores con más partidas son:\n"
+text = "Hay nuevas estadísticas de Werewolf Beauchef en <a href='{}?from=bot'>{}</a>.\nLos jugadores con más partidas son:\n".format(base_url,base_url)
 for s in res:
 	text += "{}.- <a href='https://badger.cl/werestats/user.php?uid={}&from=bot'>{}</a> ({} total, {} ganadas, {} perdidas)\n".format(i,s[1], s[0], s[2], s[3],s[4])
 	i+=1
