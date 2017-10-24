@@ -7,7 +7,7 @@ require_once('app/config.php');
 $uid = intval($_GET['uid']);
 if(!$uid) die("uid inválido");
 
-$sql = "SELECT players.name AS name, played, won, lost, survived, roles.name AS most_common_role, most_killed, most_killed_name, most_killed_by, most_killed_by_name, date FROM player_stats_delta JOIN (players, roles) ON ( player_stats_delta.uid = players.uid AND player_stats_delta.most_common_role_id = roles.id ) WHERE player_stats_delta.uid = $uid LIMIT 30";
+$sql = "SELECT players.name AS name, played, won, lost, survived, roles.name AS most_common_role, most_killed, most_killed_name, most_killed_by, most_killed_by_name, date FROM player_stats_delta JOIN (players, roles) ON ( player_stats_delta.uid = players.uid AND player_stats_delta.most_common_role_id = roles.id ) WHERE player_stats_delta.uid = $uid ORDER BY date DESC LIMIT 30";
 $db = DbConfig::getConnection();
 $result = $db->query($sql);
 $data = array();
@@ -32,6 +32,7 @@ while ($row = $result->fetch_assoc()) {
 	$row['survived_percentaje'] = $row['played']==0?"0":number_format($row['survived']/$row['played']*100,0);
 	$data[] = $row;
 }
+$data = array_reverse($data);
 $sql = 'SELECT DISTINCT DATE(date) last_update FROM player_stats_delta ORDER BY DATE(date) DESC LIMIT 2';
 $res = $db->query($sql);
 $last_update = [];
