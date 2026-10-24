@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf8 -*-
 
 import requests
@@ -58,7 +58,7 @@ def get_stats(uid, roles, db):
 
     if len(s.text) < 10:
         disable_user(uid, db)
-	return roles
+        return roles
 
     total = 0;
     won = 0;
@@ -71,30 +71,34 @@ def get_stats(uid, roles, db):
     most_killed_by = '';
     most_killed_by_count = 0;
 
-    for tr in s.select('tr'):
-        td = tr.select('td')
-        print "{} -> {}".format(td[0].text, td[1].text)
-        if td[0].text == 'Games played total':
-            total = td[1].text
-        if td[0].text == 'Games won':
-            won = td[1].text
-        if td[0].text == 'Games lost':
-            lost = td[1].text
-        if td[0].text == 'Games survived':
-            survived = td[1].text
-        if td[0].text == 'Most common role':
-            common_role = td[1].text.lower()
-            if common_role in roles:
-                common_role_id = roles[common_role]
-            else:
-                roles = add_role(common_role, roles, db)
-                common_role_id = roles[common_role]
-        if td[0].text == 'Most killed':
-            most_killed_count = int(td[2].text.replace('times',''))
-            most_killed = td[1].text.encode('latin-1').encode('utf8').strip()
-        if td[0].text == 'Most killed by':
-            most_killed_by_count = int(td[2].text.replace('times',''))
-            most_killed_by = td[1].text.encode('latin-1').encode('utf8').strip()
+    try:
+        for tr in s.select('tr'):
+            td = tr.select('td')
+            print "{} -> {}".format(td[0].text, td[1].text)
+            if td[0].text == 'Games played total':
+                total = td[1].text
+            if td[0].text == 'Games won':
+                won = td[1].text
+            if td[0].text == 'Games lost':
+                lost = td[1].text
+            if td[0].text == 'Games survived':
+                survived = td[1].text
+            if td[0].text == 'Most common role':
+                common_role = td[1].text.lower()
+                if common_role in roles:
+                    common_role_id = roles[common_role]
+                else:
+                    roles = add_role(common_role, roles, db)
+                    common_role_id = roles[common_role]
+            if td[0].text == 'Most killed':
+                most_killed_count = int(td[2].text.replace('times',''))
+                most_killed = td[1].text.encode('latin-1').encode('utf8').strip()
+            if td[0].text == 'Most killed by':
+                most_killed_by_count = int(td[2].text.replace('times',''))
+                most_killed_by = td[1].text.encode('latin-1').encode('utf8').strip()
+    except:
+        report_error("User {} not parsed".format(uid))
+        return roles
 
     sql = "INSERT INTO player_stats (uid, played, won, lost, survived, most_common_role_id, most_killed, most_killed_name, most_killed_by, most_killed_by_name) VALUES ({},{},{},{},{},'{}',{},'{}',{},'{}')".format(uid, total, won, lost, survived, common_role_id, most_killed_count, most_killed, most_killed_by_count, most_killed_by)
     print(sql)
@@ -110,6 +114,8 @@ def get_stats(uid, roles, db):
         print(str(e))
     return roles
 
+def report_error(str):
+    print(str)
 
 db = mysql.connector.Connect(**Config.dbinfo())
 roles = get_roles(db)

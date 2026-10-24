@@ -18,6 +18,23 @@ def send_message(txt, dest):
 	p = {'chat_id':dest,'parse_mode':'html','disable_web_page_preview':True, 'text':txt}
 	r = requests.post(u,data=p)
 
+def exist_stats():
+	for s in res:
+		if s[2] == 0:
+			return False
+	return True
+
+def make_no_stats():
+	return "Una vergüenza, nadie jugó en las últimas 12 horas, no hay stats que mostrar :(\nPara iniciar una partida usar /startgame o /startchaos\n"
+
+def make_stats(base_url, res):
+	i = 1
+	text = "Hay nuevas estadísticas de Werewolf Beauchef en <a href='{}?from=bot'>{}</a>.\nLos jugadores con más partidas son:\n".format(base_url,base_url)
+	for s in res:
+		text += "{}.- <a href='https://badger.cl/werestats/user.php?uid={}&from=bot'>{}</a> ({} total, {} ganadas, {} perdidas)\n".format(i,s[1], s[0], s[2], s[3],s[4])
+		i+=1
+	return text
+
 sql = 'SELECT players.name AS name, player_stats_delta.uid, played, won, lost FROM player_stats_delta INNER JOIN ( ( SELECT MAX(id) id, MAX(date) FROM player_stats_delta GROUP BY uid ) b, players, roles ) ON( player_stats_delta.id = b.id AND player_stats_delta.uid = players.uid AND player_stats_delta.most_common_role_id = roles.id ) WHERE players.status > 0 ORDER BY player_stats_delta.played DESC LIMIT 5'
 db = mysql.connector.Connect(**Config.dbinfo())
 cursor = db.cursor()
@@ -31,11 +48,12 @@ for row in cursor.fetchall():
 cursor.close()
 db.close()
 
-i = 1
-text = "Hay nuevas estadísticas de Werewolf Beauchef en <a href='{}?from=bot'>{}</a>.\nLos jugadores con más partidas son:\n".format(base_url,base_url)
-for s in res:
-	text += "{}.- <a href='https://badger.cl/werestats/user.php?uid={}&from=bot'>{}</a> ({} total, {} ganadas, {} perdidas)\n".format(i,s[1], s[0], s[2], s[3],s[4])
-	i+=1
+text = ""
+if exist_stats():
+	text = make_stats(base_url, res)
+else:
+	text = make_no_stats()
+
 text += "\nPara aparecer en las estadísticas o actualizar tu nombre envía el comando /start por interno a @werewolf_beauchef_bot"
 text += "\nAhora puedes pedir la lista de logros con /logros, revisar tus logros enviando el comando /mis_logros, pedir link de tus stats con /mis_stats o los de otros con /stats_de @usuario"
 send_message(text,chat_id)
